@@ -5,7 +5,7 @@ A monorepo starter for a **simulation-first** crash game dashboard, round engine
 ## Project structure
 
 ```text
-/home/runner/work/1win/1win
+<project-root>
 ├── apps
 │   ├── backend      # Fastify + WebSocket crash simulator
 │   ├── bot-worker   # Config-driven simulation bots
@@ -26,7 +26,7 @@ A monorepo starter for a **simulation-first** crash game dashboard, round engine
 ## Install
 
 ```bash
-cd /home/runner/work/1win/1win
+cd <project-root>
 corepack enable
 pnpm install
 cp .env.example .env
@@ -37,7 +37,7 @@ cp .env.example .env
 Run each service in a separate shell:
 
 ```bash
-cd /home/runner/work/1win/1win
+cd <project-root>
 pnpm dev:backend
 pnpm dev:frontend
 pnpm dev:bot
@@ -50,7 +50,7 @@ Frontend: `http://localhost:5173`
 ## Validation
 
 ```bash
-cd /home/runner/work/1win/1win
+cd <project-root>
 pnpm lint
 pnpm test
 pnpm build
