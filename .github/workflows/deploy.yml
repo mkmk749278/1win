@@ -135,6 +135,17 @@ jobs:
               "${{ secrets.DEPLOY_WEBHOOK_URL }}"
           fi
 
+      - name: Notify deployment success
+        if: success()
+        run: |
+          if [ -n "${{ secrets.DEPLOY_WEBHOOK_URL }}" ]; then
+            curl --fail --show-error --silent \
+              -X POST \
+              -H 'Content-Type: application/json' \
+              -d '{"text":"1win deployment succeeded for commit ${{ github.sha }}. Workflow: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"}' \
+              "${{ secrets.DEPLOY_WEBHOOK_URL }}"
+          fi
+
       - name: Summarize deployment status
         if: always()
         run: |

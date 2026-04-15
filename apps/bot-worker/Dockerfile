@@ -15,6 +15,7 @@ COPY packages/shared/package.json packages/shared/package.json
 RUN pnpm install --frozen-lockfile
 COPY apps/bot-worker apps/bot-worker
 COPY packages/shared packages/shared
+# pnpm v10 requires the legacy deploy mode unless injected workspace packages are enabled.
 RUN pnpm --filter @crash/shared build \
   && pnpm --filter @crash/bot-worker build \
   && pnpm deploy --legacy --filter @crash/bot-worker --prod /prod/bot-worker

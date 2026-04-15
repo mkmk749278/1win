@@ -25,7 +25,15 @@ install_system_packages() {
     "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo \"$VERSION_CODENAME\") stable" \
     | sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
 
-  curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+  if [ ! -f /etc/apt/keyrings/nodesource.gpg ]; then
+    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+    sudo chmod a+r /etc/apt/keyrings/nodesource.gpg
+  fi
+
+  echo \
+    "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" \
+    | sudo tee /etc/apt/sources.list.d/nodesource.list >/dev/null
+
   sudo apt-get update
   sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin nodejs
   sudo npm install -g pnpm pm2

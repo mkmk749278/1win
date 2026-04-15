@@ -16,7 +16,7 @@ export async function createApp(env: Env, logger: RoundManagerLogger, roundManag
         return;
       }
 
-      callback(new Error('origin not allowed'), false);
+      callback(new Error(`CORS: origin '${origin}' not allowed`), false);
     },
   });
 

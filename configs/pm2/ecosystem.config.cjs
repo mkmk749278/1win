@@ -1,5 +1,6 @@
 const projectRoot = process.env.PROJECT_ROOT ?? '/opt/1win-crash';
 const backendWsUrl = process.env.BACKEND_WS_URL ?? 'ws://127.0.0.1:3001/ws';
+const corsOrigins = process.env.CORS_ORIGINS ?? 'https://crash.example.com';
 
 module.exports = {
   apps: [
@@ -19,7 +20,7 @@ module.exports = {
         NODE_ENV: 'production',
         HOST: '0.0.0.0',
         BACKEND_PORT: 3001,
-        CORS_ORIGINS: 'https://crash.example.com'
+        CORS_ORIGINS: corsOrigins
       }
     },
     {

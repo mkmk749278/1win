@@ -3,16 +3,16 @@ import type { CrashEvent, PublicRoundState } from '@crash/shared';
 export type SocketEnvelope = CrashEvent | { type: 'state'; payload: PublicRoundState };
 
 function resolveSocketUrl(rawUrl?: string) {
+  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+
   if (rawUrl?.startsWith('ws://') || rawUrl?.startsWith('wss://')) {
     return rawUrl;
   }
 
   if (rawUrl?.startsWith('/')) {
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     return `${protocol}//${window.location.host}${rawUrl}`;
   }
 
-  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
   return `${protocol}//${window.location.host}/ws`;
 }
 
