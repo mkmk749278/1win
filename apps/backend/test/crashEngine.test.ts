@@ -14,4 +14,14 @@ describe('CrashEngine', () => {
     expect(crashPoint).toBeGreaterThanOrEqual(1.05);
     expect(crashPoint).toBeLessThanOrEqual(10);
   });
+
+  it('can produce instant bust rounds from the configured floor', () => {
+    const engine = new CrashEngine(() => 0.01, 1.05, 10, 0.01, 0.03);
+    expect(engine.generateCrashPoint()).toBe(1.05);
+  });
+
+  it('follows a realistic long-tail distribution for midrange rolls', () => {
+    const engine = new CrashEngine(() => 0.5, 1.05, 10, 0.01, 0.03);
+    expect(engine.generateCrashPoint()).toBe(1.92);
+  });
 });

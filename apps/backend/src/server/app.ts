@@ -5,10 +5,22 @@ import type { RoundManager } from '../game/roundManager.js';
 import type { RoundManagerLogger } from '../game/types.js';
 
 export async function createApp(env: Env, logger: RoundManagerLogger, roundManager: RoundManager) {
+  const allowedOrigins = env.CORS_ORIGINS.split(',')
+    .map((origin) => origin.trim())
+    .filter((origin) => origin.length > 0);
   const app = Fastify({ logger: false });
-  await app.register(cors, { origin: true });
+  await app.register(cors, {
+    origin(origin, callback) {
+      if (!origin || allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
+        callback(null, true);
+        return;
+      }
 
-  app.get('/health', async () => ({ ok: true }));
+      callback(new Error('origin not allowed'), false);
+    },
+  });
+
+  app.get('/health', async () => ({ ok: true, phase: roundManager.getPublicState().phase }));
   app.get('/state', async () => roundManager.getPublicState());
   app.get('/config', async () => ({ tickMs: env.TICK_MS, prepMs: env.PREP_MS }));
 

@@ -134,7 +134,13 @@ Safety controls included in bot configs:
 ## GitHub Actions
 
 - `ci.yml` installs dependencies, lints, tests, and builds every push and pull request.
-- `deploy.yml` is a manual workflow template for SSH-based VPS deploys.
+- `deploy.yml` builds production Docker images, pushes them to GHCR, deploys them to the VPS, runs healthchecks, and can notify a webhook on failure.
+
+## Production deployment
+
+- Copy `.env.vps.example` to `.env` when using Docker Compose on a VPS.
+- Run `./scripts/setup-vps.sh` on Ubuntu 22.04+ to install Docker, Docker Compose, Node.js, PM2, nginx, certbot, and the firewall baseline.
+- See `docs/production-deployment.md` for the full Docker, VPS, nginx, SSL, PM2, database, and monitoring guide.
 
 ## Security and scalability recommendations
 

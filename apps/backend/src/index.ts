@@ -12,7 +12,13 @@ async function bootstrap() {
   const roundManager = new RoundManager({
     tickMs: env.TICK_MS,
     prepMs: env.PREP_MS,
-    engine: new CrashEngine(undefined, env.CRASH_MIN, env.CRASH_MAX),
+    engine: new CrashEngine(
+      undefined,
+      env.CRASH_MIN,
+      env.CRASH_MAX,
+      env.CRASH_HOUSE_EDGE,
+      env.CRASH_INSTANT_BUST_PROBABILITY,
+    ),
     onBroadcast: () => undefined,
     logger,
   });

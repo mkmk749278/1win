@@ -1,19 +1,98 @@
+x-default-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "5"
+
 services:
   backend:
-    image: node:24-bookworm
-    working_dir: /workspace
-    volumes:
-      - .:/workspace
-    command: sh -c "corepack enable && pnpm install && pnpm --filter @crash/backend dev"
+    build:
+      context: .
+      dockerfile: apps/backend/Dockerfile
+    image: ${BACKEND_IMAGE:-ghcr.io/mkmk749278/1win-backend}:${IMAGE_TAG:-latest}
+    env_file:
+      - ${APP_ENV_FILE:-.env}
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
     ports:
-      - "3001:3001"
-  frontend:
-    image: node:24-bookworm
-    working_dir: /workspace
+      - "127.0.0.1:${BACKEND_BIND_PORT:-3001}:3001"
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3001/health').then((response) => { if (!response.ok) process.exit(1); }).catch(() => process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
+    logging: *default-logging
+    networks:
+      - crash-network
+
+  bot-worker:
+    build:
+      context: .
+      dockerfile: apps/bot-worker/Dockerfile
+    image: ${BOT_WORKER_IMAGE:-ghcr.io/mkmk749278/1win-bot-worker}:${IMAGE_TAG:-latest}
+    env_file:
+      - ${APP_ENV_FILE:-.env}
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      BACKEND_WS_URL: ${BACKEND_WS_URL:-ws://backend:3001/ws}
+      BOT_CONFIG_PATH: ${BOT_CONFIG_PATH:-/app/configs/bots/conservative.json}
+      BOT_HEALTH_PORT: ${BOT_HEALTH_PORT:-3002}
     volumes:
-      - .:/workspace
-    command: sh -c "corepack enable && pnpm install && pnpm --filter @crash/frontend dev -- --host 0.0.0.0"
-    ports:
-      - "5173:5173"
+      - ./configs/bots:/app/configs/bots:ro
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:${BOT_BIND_HEALTH_PORT:-3002}:${BOT_HEALTH_PORT:-3002}"
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:' + (process.env.BOT_HEALTH_PORT ?? 3002) + '/health').then((response) => { if (!response.ok) process.exit(1); }).catch(() => process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
+    logging: *default-logging
+    networks:
+      - crash-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: apps/frontend/Dockerfile
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-/api}
+        VITE_WS_URL: ${VITE_WS_URL:-/ws}
+    image: ${FRONTEND_IMAGE:-ghcr.io/mkmk749278/1win-frontend}:${IMAGE_TAG:-latest}
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:${FRONTEND_BIND_PORT:-8080}:8080"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8080/health >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
+    logging: *default-logging
+    networks:
+      - crash-network
+
+networks:
+  crash-network:
+    driver: bridge

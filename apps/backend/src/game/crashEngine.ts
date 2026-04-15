@@ -5,6 +5,8 @@ export class CrashEngine {
     private readonly random: RandomSource = defaultRandomSource,
     private readonly minCrash = 1.05,
     private readonly maxCrash = 15,
+    private readonly houseEdge = 0.01,
+    private readonly instantBustProbability = 0.03,
   ) {}
 
   // The multiplier accelerates over time so the graph feels like a real crash round.
@@ -14,10 +16,15 @@ export class CrashEngine {
     return Number(multiplier.toFixed(2));
   }
 
-  // This is intentionally simulation-focused and not a provably-fair production algorithm.
+  // This remains simulation-focused, but the curve better reflects the long-tail shape of a crash game.
   generateCrashPoint(): number {
-    const skewed = Math.pow(this.random(), 1.6);
-    const crashPoint = this.minCrash + skewed * (this.maxCrash - this.minCrash);
+    const roll = clamp(this.random(), 0, 0.999999);
+    if (roll <= this.instantBustProbability) {
+      return this.minCrash;
+    }
+
+    const normalized = (roll - this.instantBustProbability) / (1 - this.instantBustProbability);
+    const crashPoint = (1 - this.houseEdge) / (1 - normalized);
     return Number(clamp(crashPoint, this.minCrash, this.maxCrash).toFixed(2));
   }
 }
