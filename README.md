@@ -64,7 +64,7 @@ pnpm build
 
 ## Bot overview
 
-Bots are **simulation-only**. They never call a third-party betting API. Each bot loads a JSON config from `/home/runner/work/1win/1win/configs/bots` and applies a strategy module.
+Bots are **simulation-only**. They never call a third-party betting API. Each bot loads a JSON config from `./configs/bots` during local development or `/opt/1win-crash/configs/bots` on the VPS and applies a strategy module.
 
 Supported strategies:
 

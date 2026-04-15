@@ -1,3 +1,5 @@
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import pino from 'pino';
 import WebSocket from 'ws';
 import type { BotConfig, CrashEvent, RoundCrashEvent } from '@crash/shared';
@@ -7,7 +9,11 @@ import { FixedTargetStrategy } from './strategies/fixedTarget.js';
 import type { BotStrategy } from './strategies/baseStrategy.js';
 
 const logger = pino({ level: process.env.LOG_LEVEL ?? 'info', base: null, timestamp: pino.stdTimeFunctions.isoTime });
-const configPath = process.env.BOT_CONFIG_PATH ?? '/home/runner/work/1win/1win/configs/bots/conservative.json';
+const defaultConfigPath = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  '../../../configs/bots/conservative.json',
+);
+const configPath = process.env.BOT_CONFIG_PATH ?? defaultConfigPath;
 const socketUrl = process.env.BACKEND_WS_URL ?? 'ws://localhost:3001/ws';
 const config = loadBotConfig(configPath);
 
