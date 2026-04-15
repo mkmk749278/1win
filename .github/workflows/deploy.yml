@@ -11,6 +11,9 @@ on:
         required: true
         default: /opt/1win-crash
 
+permissions:
+  contents: read
+
 jobs:
   deploy:
     runs-on: ubuntu-latest

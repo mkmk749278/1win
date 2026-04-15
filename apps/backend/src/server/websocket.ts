@@ -1,7 +1,9 @@
 import { WebSocket, WebSocketServer } from 'ws';
 import type { Server } from 'node:http';
-import { SOCKET_PATH, type CrashEvent, type PublicRoundState } from '@crash/shared';
+import type { CrashEvent, PublicRoundState } from '@crash/shared';
 import type { RoundManagerLogger } from '../game/types.js';
+
+const SOCKET_PATH = '/ws';
 
 export function createRealtimeHub(server: Server, logger: RoundManagerLogger, getSnapshot: () => PublicRoundState) {
   const wss = new WebSocketServer({ noServer: true });

@@ -17,12 +17,13 @@ export class FibonacciStrategy implements BotStrategy {
     }
 
     const stakeIndex = Math.min(context.skippedRounds, sequence.length - 1);
+    const suggestedStake = sequence[stakeIndex] ?? sequence[sequence.length - 1] ?? 1;
 
     return {
       shouldEnter: true,
       reason: 'two short rounds in a row triggered fibonacci simulation',
       targetMultiplier: context.targetMultiplier,
-      suggestedStake: sequence[stakeIndex],
+      suggestedStake,
     };
   }
 }

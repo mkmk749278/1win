@@ -1,8 +1,9 @@
 import type { CrashEvent, PublicRoundState, SignalEvent } from '@crash/shared';
-import { MAX_SIGNAL_HISTORY } from '@crash/shared';
 import { CrashEngine } from './crashEngine.js';
 import { SignalService } from '../services/signalService.js';
 import type { BroadcastFn, RoundManagerLogger, RoundManagerSnapshot } from './types.js';
+
+const MAX_SIGNAL_HISTORY = 8;
 
 export type RoundManagerDeps = {
   tickMs: number;
@@ -18,8 +19,8 @@ export class RoundManager {
   private readonly signalService = new SignalService();
   private readonly now: () => number;
   private broadcaster: BroadcastFn;
-  private prepTimer?: NodeJS.Timeout;
-  private tickTimer?: NodeJS.Timeout;
+  private prepTimer: NodeJS.Timeout | undefined;
+  private tickTimer: NodeJS.Timeout | undefined;
   private state: RoundManagerSnapshot = {
     roundId: 'round-0',
     phase: 'idle',

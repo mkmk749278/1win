@@ -6,7 +6,7 @@ import { FibonacciStrategy } from './strategies/fibonacci.js';
 import { FixedTargetStrategy } from './strategies/fixedTarget.js';
 import type { BotStrategy } from './strategies/baseStrategy.js';
 
-const logger = pino({ level: process.env.LOG_LEVEL ?? 'info', base: undefined, timestamp: pino.stdTimeFunctions.isoTime });
+const logger = pino({ level: process.env.LOG_LEVEL ?? 'info', base: null, timestamp: pino.stdTimeFunctions.isoTime });
 const configPath = process.env.BOT_CONFIG_PATH ?? '/home/runner/work/1win/1win/configs/bots/conservative.json';
 const socketUrl = process.env.BACKEND_WS_URL ?? 'ws://localhost:3001/ws';
 const config = loadBotConfig(configPath);
@@ -35,12 +35,12 @@ class BotRuntime {
       logger.info({ bot: config.name, strategy: this.strategy.name }, 'bot connected');
     });
 
-    this.socket.on('message', (raw) => this.handleMessage(String(raw)));
+    this.socket.on('message', (raw: WebSocket.RawData) => this.handleMessage(String(raw)));
     this.socket.on('close', () => {
       logger.warn({ bot: config.name }, 'bot disconnected, scheduling reconnect');
       setTimeout(() => this.connect(), config.reconnectDelayMs);
     });
-    this.socket.on('error', (error) => {
+    this.socket.on('error', (error: Error) => {
       logger.error({ bot: config.name, error }, 'bot websocket error');
     });
   }
