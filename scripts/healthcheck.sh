@@ -7,4 +7,4 @@ FRONTEND_HEALTH_URL="${FRONTEND_HEALTH_URL:-http://127.0.0.1:${FRONTEND_BIND_POR
 
 curl --fail --silent "$BACKEND_HEALTH_URL" | grep -E '"ok"[[:space:]]*:[[:space:]]*true'
 curl --fail --silent "$BOT_HEALTH_URL" | grep -E '"ok"[[:space:]]*:[[:space:]]*true'
-curl --fail --silent "$FRONTEND_HEALTH_URL" | grep -E '"ok"[[:space:]]*:[[:space:]]*true|^ok$'
+curl --fail --silent "$FRONTEND_HEALTH_URL" | grep -E '"ok"[[:space:]]*:[[:space:]]*true'

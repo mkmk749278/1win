@@ -155,7 +155,8 @@ class BotRuntime {
       return;
     }
 
-    // Allow a few reconnect windows before marking the worker unhealthy to avoid false positives during restarts.
+    // Allow a few reconnect windows, with a 15s floor, before marking the worker unhealthy to avoid false positives
+    // during expected reconnects or short backend restarts.
     const staleThresholdMs = Math.max(config.reconnectDelayMs * RECONNECT_DELAY_MULTIPLIER, MIN_STALE_THRESHOLD_MS);
     const messageAgeMs = this.lastMessageAt === null ? null : Date.now() - this.lastMessageAt;
     const healthy = this.connected && messageAgeMs !== null && messageAgeMs <= staleThresholdMs;

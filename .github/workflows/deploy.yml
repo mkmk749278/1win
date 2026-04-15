@@ -113,6 +113,7 @@ jobs:
             git checkout "$DEPLOY_BRANCH"
             git reset --hard "origin/$DEPLOY_BRANCH"
 
+            set +x
             echo "${{ secrets.VPS_REGISTRY_TOKEN }}" | docker login ${{ env.REGISTRY }} -u "${{ secrets.VPS_REGISTRY_USER }}" --password-stdin
 
             export IMAGE_TAG="${{ github.sha }}"
