@@ -1,0 +1,10 @@
+node_modules/
+dist/
+coverage/
+.env
+*.log
+apps/frontend/node_modules/
+apps/frontend/dist/
+apps/backend/dist/
+apps/bot-worker/dist/
+packages/shared/dist/

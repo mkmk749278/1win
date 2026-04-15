@@ -1,0 +1,9 @@
+{
+  "name": "conservative-bot",
+  "strategy": "fixedTarget",
+  "targetMultiplier": 1.8,
+  "dryRun": true,
+  "reconnectDelayMs": 3000,
+  "cooldownRounds": 1,
+  "maxSimulatedEntriesPerDay": 18
+}

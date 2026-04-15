@@ -1,0 +1,9 @@
+{
+  "name": "aggressive-bot",
+  "strategy": "fibonacci",
+  "targetMultiplier": 2.8,
+  "dryRun": true,
+  "reconnectDelayMs": 3000,
+  "cooldownRounds": 2,
+  "maxSimulatedEntriesPerDay": 12
+}

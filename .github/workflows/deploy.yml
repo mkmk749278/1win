@@ -1,0 +1,47 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      host:
+        description: VPS hostname
+        required: true
+      deploy_path:
+        description: Deploy path on the VPS
+        required: true
+        default: /opt/1win-crash
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - name: Upload build to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ inputs.host }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          source: "apps/frontend/dist,apps/backend/dist,apps/bot-worker/dist,configs,scripts,package.json,pnpm-lock.yaml"
+          target: ${{ inputs.deploy_path }}
+      - name: Restart services
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ inputs.host }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            cd ${{ inputs.deploy_path }}
+            pm2 startOrReload configs/pm2/ecosystem.config.cjs
