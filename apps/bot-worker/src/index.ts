@@ -13,6 +13,8 @@ const defaultConfigPath = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   '../../../configs/bots/conservative.json',
 );
+const RECONNECT_DELAY_MULTIPLIER = 4;
+const MIN_STALE_THRESHOLD_MS = 15_000;
 const configPath = process.env.BOT_CONFIG_PATH ?? defaultConfigPath;
 const socketUrl = process.env.BACKEND_WS_URL ?? 'ws://localhost:3001/ws';
 const botHealthPort = Number(process.env.BOT_HEALTH_PORT ?? 3002);
@@ -25,8 +27,8 @@ class BotRuntime {
   private recentCrashes: number[] = [];
   private simulatedEntriesToday = 0;
   private currentDay = new Date().toDateString();
-  private socket?: WebSocket;
-  private reconnectTimer?: NodeJS.Timeout;
+  private socket: WebSocket | undefined;
+  private reconnectTimer: NodeJS.Timeout | undefined;
   private connected = false;
   private shuttingDown = false;
   private lastMessageAt: number | null = null;
@@ -153,7 +155,7 @@ class BotRuntime {
       return;
     }
 
-    const staleThresholdMs = Math.max(config.reconnectDelayMs * 4, 15_000);
+    const staleThresholdMs = Math.max(config.reconnectDelayMs * RECONNECT_DELAY_MULTIPLIER, MIN_STALE_THRESHOLD_MS);
     const messageAgeMs = this.lastMessageAt === null ? null : Date.now() - this.lastMessageAt;
     const healthy = this.connected && messageAgeMs !== null && messageAgeMs <= staleThresholdMs;
 

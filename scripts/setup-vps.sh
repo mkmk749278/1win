@@ -65,8 +65,17 @@ start_containers() {
   cd "$DEPLOY_PATH"
   docker compose pull || true
   docker compose up -d --build
-  sleep 10
-  /usr/bin/env bash scripts/healthcheck.sh
+  for attempt in 1 2 3 4 5 6; do
+    if /usr/bin/env bash scripts/healthcheck.sh; then
+      return
+    fi
+
+    echo "Healthcheck attempt $attempt failed; retrying in 5 seconds..."
+    sleep 5
+  done
+
+  echo "Deployment healthchecks did not pass after retries." >&2
+  return 1
 }
 
 main() {

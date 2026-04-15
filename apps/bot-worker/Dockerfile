@@ -17,7 +17,7 @@ COPY apps/bot-worker apps/bot-worker
 COPY packages/shared packages/shared
 RUN pnpm --filter @crash/shared build \
   && pnpm --filter @crash/bot-worker build \
-  && pnpm deploy --filter @crash/bot-worker --prod /prod/bot-worker
+  && pnpm deploy --legacy --filter @crash/bot-worker --prod /prod/bot-worker
 
 FROM node:20-bookworm-slim AS runtime
 ENV NODE_ENV=production

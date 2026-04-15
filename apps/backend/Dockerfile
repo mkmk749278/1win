@@ -17,7 +17,7 @@ COPY apps/backend apps/backend
 COPY packages/shared packages/shared
 RUN pnpm --filter @crash/shared build \
   && pnpm --filter @crash/backend build \
-  && pnpm deploy --filter @crash/backend --prod /prod/backend
+  && pnpm deploy --legacy --filter @crash/backend --prod /prod/backend
 
 FROM node:20-bookworm-slim AS runtime
 ENV NODE_ENV=production

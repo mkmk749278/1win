@@ -10,10 +10,18 @@ services:
       context: .
       dockerfile: apps/backend/Dockerfile
     image: ${BACKEND_IMAGE:-ghcr.io/mkmk749278/1win-backend}:${IMAGE_TAG:-latest}
-    env_file:
-      - ${APP_ENV_FILE:-.env}
     environment:
       NODE_ENV: ${NODE_ENV:-production}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      HOST: ${HOST:-0.0.0.0}
+      BACKEND_PORT: ${BACKEND_PORT:-3001}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173,http://127.0.0.1:5173}
+      PREP_MS: ${PREP_MS:-5000}
+      TICK_MS: ${TICK_MS:-100}
+      CRASH_MIN: ${CRASH_MIN:-1.05}
+      CRASH_MAX: ${CRASH_MAX:-15}
+      CRASH_HOUSE_EDGE: ${CRASH_HOUSE_EDGE:-0.01}
+      CRASH_INSTANT_BUST_PROBABILITY: ${CRASH_INSTANT_BUST_PROBABILITY:-0.03}
     ports:
       - "127.0.0.1:${BACKEND_BIND_PORT:-3001}:3001"
     restart: unless-stopped
@@ -38,10 +46,9 @@ services:
       context: .
       dockerfile: apps/bot-worker/Dockerfile
     image: ${BOT_WORKER_IMAGE:-ghcr.io/mkmk749278/1win-bot-worker}:${IMAGE_TAG:-latest}
-    env_file:
-      - ${APP_ENV_FILE:-.env}
     environment:
       NODE_ENV: ${NODE_ENV:-production}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
       BACKEND_WS_URL: ${BACKEND_WS_URL:-ws://backend:3001/ws}
       BOT_CONFIG_PATH: ${BOT_CONFIG_PATH:-/app/configs/bots/conservative.json}
       BOT_HEALTH_PORT: ${BOT_HEALTH_PORT:-3002}

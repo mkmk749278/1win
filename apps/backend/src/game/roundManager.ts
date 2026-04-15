@@ -58,6 +58,10 @@ export class RoundManager {
     return structuredClone(this.state);
   }
 
+  getPhase(): PublicRoundState['phase'] {
+    return this.state.phase;
+  }
+
   setBroadcaster(broadcaster: BroadcastFn) {
     this.broadcaster = broadcaster;
   }

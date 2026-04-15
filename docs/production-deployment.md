@@ -115,7 +115,7 @@ The PM2 template keeps backend and both bot profiles autorestarting with restart
 
 ## 6. Suggested database schema
 
-PostgreSQL is the better default for auditability, queries, and time-series style reporting. Recommended schema:
+PostgreSQL is the better default here because crash rounds, bot actions, and daily metrics are relational, query-heavy, and benefit from transactions, indexes, and time-based reporting. Recommended schema:
 
 ```sql
 create table crash_rounds (

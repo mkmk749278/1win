@@ -20,7 +20,7 @@ export async function createApp(env: Env, logger: RoundManagerLogger, roundManag
     },
   });
 
-  app.get('/health', async () => ({ ok: true, phase: roundManager.getPublicState().phase }));
+  app.get('/health', async () => ({ ok: true, phase: roundManager.getPhase() }));
   app.get('/state', async () => roundManager.getPublicState());
   app.get('/config', async () => ({ tickMs: env.TICK_MS, prepMs: env.PREP_MS }));
 
